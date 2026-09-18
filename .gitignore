@@ -1,0 +1,30 @@
+# 依赖
+/node_modules
+
+# 构建产物
+/build
+
+# Docusaurus 生成文件
+.docusaurus
+.cache-loader
+
+# 日志
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 环境变量（可能含密钥，不要提交）
+.env
+.env.local
+.env.*.local
+
+# 系统文件
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# 编辑器 / IDE 配置
+.vscode/
+.idea/
+*.swp
+.obsidian/
