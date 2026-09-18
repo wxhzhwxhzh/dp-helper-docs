@@ -1,0 +1,45 @@
+# 工作流名称
+name: Deploy to GitHub Pages
+
+# 触发条件：推送到 main 分支时执行
+on:
+  push:
+    branches:
+      - main
+
+# 授予工作流写权限（用于发布到 gh-pages 分支）
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    name: 部署到 GitHub Pages
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 检出代码
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2. 安装 Node.js（与 package.json 中 engines 要求一致）
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # 3. 按 package-lock.json 精确安装依赖
+      - name: 安装依赖
+        run: npm ci
+
+      # 4. 构建静态站点，产物输出到 build/
+      - name: 构建站点
+        run: npm run build
+
+      # 5. 把 build/ 目录发布到 gh-pages 分支
+      - name: 部署到 GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build

@@ -15,14 +15,16 @@ const config = {
     v4: true, // 提升与即将到来的 Docusaurus v4 的兼容性
   },
   // 在此设置站点的正式线上地址
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://wxhzhwxhzh.github.io',
   // 设置站点被访问时的路径前缀 /<baseUrl>/
   // 部署到 GitHub Pages 时，通常设为 '/<项目名>/'
-  baseUrl: '/',
+  baseUrl: '/dp-helper-docs/',
   // GitHub Pages 部署配置。
   // 如果不使用 GitHub Pages，就不需要配置这些。
-  organizationName: 'facebook', // 通常是你的 GitHub 组织名或用户名
-  projectName: 'docusaurus', // 通常是你的仓库名
+  organizationName: 'wxhzhwxhzh', // 通常是你的 GitHub 组织名或用户名
+  projectName: 'dp-helper-docs', // 通常是你的仓库名
+  deploymentBranch: 'gh-pages', // 明确指定部署分支
+  trailingSlash: false, // 解决上次的警告
   onBrokenLinks: 'throw',
   // 即使不使用国际化，也可以用这个字段设置有用的元数据，
   // 例如 html 的语言属性。如果你的站点是中文的，
