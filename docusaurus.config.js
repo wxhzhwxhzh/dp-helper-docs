@@ -97,7 +97,11 @@ const config = {
             label: '使用文档',
           },
           {to: '/blog', label: '日志', position: 'left'},
-         
+          {
+            href: 'https://github.com/wxhzhwxhzh/dp-helper-docs',
+            label: 'GitHub',
+            position: 'right',
+          },
           {
             href: 'https://space.bilibili.com/48179703',
             label: 'BiliBili',
