@@ -107,6 +107,22 @@ const config = {
             label: 'BiliBili',
             position: 'right',
           },
+          {
+            type: 'dropdown',
+            label: 'DrissionPage',
+            position: 'right',
+            items: [
+              {label: 'DP官网', href: 'https://drissionpage.cn/'},
+              {label: '骚神网', href: 'https://wxhzhwxhzh.github.io/sao/'},
+              {label: '工具库', href: 'https://wxhzhwxhzh.github.io/dptool/'},
+              {label: 'MCP', href: 'https://github.com/wxhzhwxhzh/DrissionPageMCP'},
+              {label: 'CLI', href: 'https://gitcode.com/saocode/drissionpage-cli'},
+              {label: 'Scrape爬虫靶场', href: 'https://scrape.center/'},
+              {label: '自动化测试靶场', href: 'https://wxhzhwxhzh.github.io/test_page/'},
+              {label: 'DP运行流程图', href: 'https://4m3h6501ydgua.aiforce.cloud/app/app_17ehncs9ds7'},
+             
+            ],
+          },
         ],
       },
       footer: {

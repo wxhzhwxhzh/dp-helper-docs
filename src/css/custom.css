@@ -28,3 +28,18 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+/* 修复：下拉菜单项较多时，鼠标移向下方菜单项会误关（hover 死区） */
+.navbar__item.dropdown.dropdown--hoverable {
+  position: relative; /* 依赖 Infima 已有的 relative，显式声明更稳 */
+}
+
+.navbar__item.dropdown.dropdown--hoverable:hover::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  /* 悬停桥高度 = 按钮底部内边距 + 0.5rem 余量，跟随主题变量变化 */
+  height: calc(var(--ifm-navbar-item-padding-vertical) + 0.5rem);
+}
