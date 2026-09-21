@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-label="Python 示意图">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3776AB"/>
+      <stop offset="1" stop-color="#2B5B84"/>
+    </linearGradient>
+    <linearGradient id="yellow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFE873"/>
+      <stop offset="1" stop-color="#FFD43B"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="24" fill="url(#bg)"/>
+  <g transform="translate(320 150)">
+    <path d="M-60,-70 h80 a40,40 0 0 1 40,40 v20 a30,30 0 0 1 -30,30 h-60 a30,30 0 0 0 -30,30 v20"
+          fill="none" stroke="#9BD4F5" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M60,70 h-80 a40,40 0 0 1 -40,-40 v-20 a30,30 0 0 1 30,-30 h60 a30,30 0 0 0 30,-30 v-20"
+          fill="none" stroke="url(#yellow)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="-20" cy="-70" r="7" fill="#3776AB"/>
+    <circle cx="20" cy="70" r="7" fill="#FFD43B"/>
+  </g>
+  <text x="320" y="292" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="64" font-weight="700" fill="#FFE873">Python</text>
+  <text x="320" y="330" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="22" fill="#CDE7F5">简洁 · 易读 · 生态丰富</text>
+</svg>

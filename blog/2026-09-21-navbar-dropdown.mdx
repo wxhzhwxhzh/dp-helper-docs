@@ -1,0 +1,83 @@
+---
+slug: navbar-dropdown
+title: 导航栏下拉菜单并修复 hover问题 
+authors: [saoshen]
+tags: [docusaurus, navbar]
+---
+
+给文档站导航栏右侧加了一个「DrissionPage」下拉菜单，顺带踩了个坑：菜单项一多，鼠标往下面的条目移动时菜单会自动消失。这里把配置写法和修复过程记一下。
+
+{/* truncate */}
+
+## 需求
+
+导航栏右侧要有一个「DrissionPage」下拉，把常用入口收进去：官网、骚神网、工具库、MCP、CLI、两个靶场和运行流程图。
+
+## 第一步：加一个 dropdown
+
+Docusaurus 的导航项直接写在 `docusaurus.config.js` 的 `themeConfig.navbar.items` 里。`type: 'dropdown'` 是内置类型，配一个 `items` 数组即可，`position: 'right'` 控制它出现在右侧：
+
+```js
+{
+  type: 'dropdown',
+  label: 'DrissionPage',
+  position: 'right',
+  items: [
+    {label: 'DP官网', href: 'https://drissionpage.cn/'},
+    {label: '骚神网', href: 'https://wxhzhwxhzh.github.io/sao/'},
+    {label: '工具库', href: 'https://wxhzhwxhzh.github.io/dptool/'},
+    {label: 'MCP', href: 'https://github.com/wxhzhwxhzh/DrissionPageMCP'},
+    {label: 'CLI', href: 'https://gitcode.com/saocode/drissionpage-cli'},
+    {label: 'Scrape爬虫靶场', href: 'https://scrape.center/'},
+    {label: '自动化测试靶场', href: 'https://wxhzhwxhzh.github.io/test_page/'},
+    {label: 'DP运行流程图', href: 'https://4m3h6501ydgua.aiforce.cloud/app/app_17ehncs9ds7'},
+  ],
+},
+```
+
+外链用 `href`，站内路由用 `to`，`label` 是显示文字。加完 `npm run start` 就能看到。
+
+## 踩坑：菜单项一多，鼠标往下移就自动关
+
+项数少的时候没感觉；加到 8 项、菜单变长后，鼠标从按钮往下面的菜单项移动，菜单经常在中途就收起了，根本点不到底部条目。
+
+## 原因
+
+桌面端下拉菜单的展开**完全靠 CSS `:hover`**，没有 JS 的 mouseenter/mouseleave 兜底：
+
+- 展开状态由 `.dropdown--hoverable:hover .dropdown__menu` 控制；
+- 菜单默认 `pointer-events: none`，只有被 hover 命中时才变成 `all`；
+- `pointer-events` 不在过渡属性里，所以指针一旦离开触发按钮那一小块，菜单立刻恢复 `pointer-events: none`——哪怕它还在淡出、视觉上没消失，鼠标移到菜单上也救不回来，必须重新碰到按钮。
+
+按钮和菜单之间靠 `top: calc(100% - 0.25rem + 0.3rem)` 加 `translateY(-1px)` 只重叠约 0.2px，等于一条发丝缝。项数少时向下挪一点就进菜单；项数一多，指针要走很长一段，途中只要有一瞬间离开「按钮 + 菜单」轮廓，hover 就丢了，菜单随即收起。
+
+## 修复：给触发区加一条「悬停桥」
+
+在 `src/css/custom.css` 里，给下拉包装盒在 `:hover` 时生成一条透明的、可命中的延伸区，把按钮和菜单之间的死区填满，指针就不会中途掉出去：
+
+```css
+/* 修复：下拉菜单项较多时，鼠标移向下方菜单项会误关（hover 死区） */
+.navbar__item.dropdown.dropdown--hoverable {
+  position: relative;
+}
+
+.navbar__item.dropdown.dropdown--hoverable:hover::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  /* 悬停桥高度 = 按钮底部内边距 + 0.5rem 余量，跟随主题变量变化 */
+  height: calc(var(--ifm-navbar-item-padding-vertical) + 0.5rem);
+}
+```
+
+几点说明：
+
+- 只在 `:hover` 时生成，菜单关闭时不占用、不拦截页面点击；
+- 高度绑到 `--ifm-navbar-item-padding-vertical` 再留 0.5rem 余量，跟随主题变量变化；
+- 只作用于桌面端，移动端下拉是 `menu__list-item` 结构，不受影响。
+
+## 验证
+
+`npm run build` 通过；`npm run start` 后缓慢把鼠标从「DrissionPage」移到最后一项，菜单保持展开，点击可正常跳转。

@@ -1,0 +1,126 @@
+---
+slug: docusaurus-blog-guide
+title: Docusaurus 日志更新指南
+authors: [saoshen]
+tags: [docusaurus, guide]
+description: 在本项目里新增 / 更新博客日志的完整流程与注意事项
+---
+
+本站的「日志」就是 Docusaurus 的博客。这篇文章把「怎么新增一篇、怎么改一篇、有哪些坑」整理成一份可照抄的指南，方便以后随手记录。
+
+{/* truncate */}
+
+## 1. 日志机制速览
+
+- 文章就是 `blog/` 目录下的 Markdown 文件，**不需要改任何配置**，放进目录即成为一篇日志。
+- 博客配置在 `docusaurus.config.js` 的 `blog` 字段（`docusaurus.config.js:51-65`），默认路由是 `/blog`，导航栏「日志」入口指向它。
+- 作者表：`blog/authors.yml`；标签表：`blog/tags.yml`。
+- 本项目开了三项校验告警：`onInlineAuthors: 'warn'`、`onInlineTags: 'warn'`、`onUntruncatedBlogPosts: 'warn'`。含义见下文第 4、5 节。
+
+## 2. 新增一篇
+
+**命名规范：文件名前缀必须是日期**，Docusaurus 用它作为发布时间。
+
+两种写法，按需选择：
+
+```text
+blog/2026-09-21-my-post.md           # 单文件
+blog/2026-09-21-my-post/index.mdx    # 目录形式，便于把图片放在同目录
+```
+
+- 日期格式必须是 `YYYY-MM-DD`，后面接标题（可英文或中文，但建议用英文/拼音，避免 URL 出现中文）。
+- 想让 URL 更好看，在 frontmatter 里加 `slug: my-post`。
+- 想用别的日期当发布时间，在 frontmatter 里加 `date: 2026-09-21`（会覆盖文件名日期）。
+
+## 3. Frontmatter 字段
+
+文件开头 `---` 之间是 frontmatter。最小模板：
+
+```mdx
+---
+title: 我的日志标题
+authors: [saoshen]
+tags: [docusaurus]
+---
+
+这里是摘要（列表页会显示这一段）。
+
+{/* truncate */}
+
+这里是正文剩余部分。
+```
+
+常用字段：
+
+| 字段 | 说明 |
+| --- | --- |
+| `title` | 标题，不写则用文件名 |
+| `authors` | 作者，需在 `authors.yml` 登记；也可写内联对象 |
+| `tags` | 标签，需在 `tags.yml` 登记；也可内联 |
+| `slug` | 自定义 URL 路径 |
+| `date` | 覆盖文件名日期 |
+| `description` | 摘要/SEO 描述 |
+| `image` | 社交分享卡片图 |
+| `draft` | `true` 时为草稿，不发布 |
+
+## 4. 登记作者与标签
+
+因为开了 `onInlineAuthors` / `onInlineTags` 告警，**用到的作者和标签最好先登记**，否则构建时会 warning。
+
+`blog/authors.yml`：
+
+```yaml
+saoshen:
+  name: 骚神
+  title: DrissionPage 插件作者
+  url: https://github.com/wxhzhwxhzh
+  image_url: /img/saologo.png
+  page: true
+```
+
+`blog/tags.yml`：
+
+```yaml
+guide:
+  label: 指南
+  permalink: /guide
+  description: 本站的使用与维护指南
+```
+
+注意 `image_url`：以 `/` 开头时会自动拼接 `baseUrl`（本站为 `/dp-helper-docs/`），所以写 `/img/saologo.png` 就能正确指向 `static/img/saologo.png`。
+
+## 5. 摘要截断线
+
+`{/* truncate */}` 是 MDX 注释语法，用来标记列表页摘要的截断位置：它之前的内容显示在博客列表，之后的只在详情页。**没写会触发 `onUntruncatedBlogPosts` 告警**（不报错，但最好补上）。
+
+## 6. 图片
+
+- 目录形式：把图片放进文章目录，用相对路径引用，如 `![说明](./cover.png)`。
+- 单文件形式：也可用 `./img/xxx.png` 或放到 `static/img/` 后用 `/img/xxx.png`。
+- 本站装了 `docusaurus-plugin-image-zoom`，正文图片点击可放大（选择器为 `.markdown :not(em) > img`）。
+
+## 7. 更新已有日志
+
+- 改内容：直接编辑对应 `blog/*.mdx`。
+- 改发布时间：把文件名日期前缀改掉，或加 frontmatter `date:`。
+- 临时下架：加 `draft: true`。
+
+## 8. 预览与构建
+
+```bash
+npm run start     # 本地预览，访问 http://localhost:3000/dp-helper-docs/blog
+npm run build     # 生产构建，用于校验是否有告警/报错
+npm run clear     # 清缓存（改配置后异常时可用）
+```
+
+## 9. `.md` 与 `.mdx` 的差别
+
+概念上 `.md` 是标准 Markdown，`.mdx` 额外支持 JSX 与 `import`。但本项目使用 Docusaurus v3 默认的 `markdown.format: 'mdx'`，**两种扩展名都会按 MDX 解析**，能力一致，扩展名目前只是命名习惯。若以后把 `markdown.format` 改为 `'detect'`，才会按扩展名区分解析方式。
+
+## 10. 常见坑
+
+- **MDX 里裸写 `<` 或 `{` 可能报错**：正文中形如 `a < b`、`{变量}` 会被当成 JSX 解析，需转义为 `\<`、`\{`（代码块内不受影响）。
+- **标签/作者未登记**：触发 warning，补到 `tags.yml` / `authors.yml` 即可。
+- **没写截断线**：触发 `onUntruncatedBlogPosts` warning。
+- **文件名日期格式错误**：不会识别为日期，排序会异常。
+- **中文文件名**：能用，但会让 URL 变成百分号编码，建议配 `slug`。

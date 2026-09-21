@@ -23,3 +23,10 @@ slorber:
     linkedin: sebastienlorber
     github: slorber
     newsletter: https://thisweekinreact.com
+
+saoshen:
+  name: 骚神
+  title: DP_helper 插件作者
+  url: https://github.com/wxhzhwxhzh
+  image_url: /img/icon.png
+  page: true

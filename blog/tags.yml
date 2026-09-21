@@ -17,3 +17,18 @@ hola:
   label: Hola
   permalink: /hola
   description: Hola tag description
+
+navbar:
+  label: 导航栏
+  permalink: /navbar
+  description: 导航栏相关的配置与样式
+
+guide:
+  label: 指南
+  permalink: /guide
+  description: 本站的使用与维护指南
+
+python:
+  label: Python
+  permalink: /python
+  description: Python 相关内容
