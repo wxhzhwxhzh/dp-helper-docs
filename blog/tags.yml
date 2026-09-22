@@ -32,3 +32,8 @@ python:
   label: Python
   permalink: /python
   description: Python 相关内容
+
+captcha:
+  label: Captcha
+  permalink: /captcha
+  description: 验证码 / 登录校验相关
