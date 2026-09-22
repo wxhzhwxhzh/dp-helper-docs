@@ -4,10 +4,47 @@
         <title>dp_helper Blog</title>
         <link>https://wxhzhwxhzh.github.io/dp-helper-docs/blog</link>
         <description>dp_helper Blog</description>
-        <lastBuildDate>Mon, 21 Sep 2026 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 22 Sep 2026 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>zh-Hans</language>
+        <item>
+            <title><![CDATA[DoubaoCaptcha.py脚本注意事项]]></title>
+            <link>https://wxhzhwxhzh.github.io/dp-helper-docs/blog/doubao-captcha-login</link>
+            <guid>https://wxhzhwxhzh.github.io/dp-helper-docs/blog/doubao-captcha-login</guid>
+            <pubDate>Tue, 22 Sep 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[DouBaoCaptchaV5 首次运行的登录方案：扫码临时登录与 Cookie 持久化免登录]]></description>
+            <content:encoded><![CDATA[<p>豆包网页接口在自动化脚本首次运行时，<strong>需要完成登录验证</strong>，有两种使用方案：扫码临时登录、Cookie 持久化免登录。</p>
+<blockquote>
+<p>⚠️ 重要提醒：多次未登录直接请求接口，会触发访问限制，导致无法正常获取回答。</p>
+</blockquote>
+<!-- -->
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="方案一扫码临时登录">方案一：扫码临时登录<a href="https://wxhzhwxhzh.github.io/dp-helper-docs/blog/doubao-captcha-login#%E6%96%B9%E6%A1%88%E4%B8%80%E6%89%AB%E7%A0%81%E4%B8%B4%E6%97%B6%E7%99%BB%E5%BD%95" class="hash-link" aria-label="方案一：扫码临时登录的直接链接" title="方案一：扫码临时登录的直接链接" translate="no">​</a></h2>
+<ol>
+<li class="">首次运行自动化代码，程序会弹出豆包网页登录二维码</li>
+<li class="">使用账号扫码完成登录</li>
+<li class="">登录成功后，按下回车，脚本继续执行后续任务</li>
+<li class="">下次再运行代码，就记住 cookie 不用登录了</li>
+</ol>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="方案二cookie-持久化免登录">方案二：Cookie 持久化免登录<a href="https://wxhzhwxhzh.github.io/dp-helper-docs/blog/doubao-captcha-login#%E6%96%B9%E6%A1%88%E4%BA%8Ccookie-%E6%8C%81%E4%B9%85%E5%8C%96%E5%85%8D%E7%99%BB%E5%BD%95" class="hash-link" aria-label="方案二：Cookie 持久化免登录的直接链接" title="方案二：Cookie 持久化免登录的直接链接" translate="no">​</a></h2>
+<p>操作步骤：</p>
+<ol>
+<li class="">浏览器打开豆包网页，正常扫码登录账号</li>
+<li class="">打开浏览器开发者工具，抓取网页请求，复制登录后的 Cookie 字符串</li>
+<li class="">将 Cookie 配置到自动化代码内</li>
+<li class="">后续启动脚本，无需再次扫码登录，直接携带 Cookie 访问接口</li>
+</ol>
+<div class="language-python codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-python codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#393A34"><span class="token keyword" style="color:#00009f">from</span><span class="token plain"> DouBaoCaptchaV5 </span><span class="token keyword" style="color:#00009f">import</span><span class="token plain"> DouBaoCaptcha</span><br></div><div class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">cookie_str </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> </span><span class="token string" style="color:#e3116c">"xxx=123; yyy=456; domain=.doubao.com;"</span><span class="token plain"></span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">db </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> DouBaoCaptcha</span><span class="token punctuation" style="color:#393A34">(</span><span class="token plain">set_cookies</span><span class="token operator" style="color:#393A34">=</span><span class="token plain">cookie_str</span><span class="token punctuation" style="color:#393A34">)</span><br></div></code></pre></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="参数说明">参数说明<a href="https://wxhzhwxhzh.github.io/dp-helper-docs/blog/doubao-captcha-login#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E" class="hash-link" aria-label="参数说明的直接链接" title="参数说明的直接链接" translate="no">​</a></h3>
+<table><thead><tr><th>参数</th><th>类型</th><th>默认值</th><th>说明</th></tr></thead><tbody><tr><td><code>debug_port</code></td><td>int</td><td><code>9623</code></td><td>浏览器调试端口</td></tr><tr><td><code>auto_hide</code></td><td>bool</td><td><code>False</code></td><td>是否自动隐藏浏览器窗口</td></tr><tr><td><code>check_log_in</code></td><td>bool</td><td><code>True</code></td><td>是否检查登录状态</td></tr><tr><td><code>set_cookies</code></td><td>str</td><td><code>None</code></td><td>传入 cookies 字符串，为 <code>None</code> 时不设置 cookies</td></tr></tbody></table>
+<blockquote>
+<p>💡 提示：传入 <code>set_cookies</code> 后，代码会先打开豆包网页，再写入 cookies 并刷新页面，最后才进行登录状态检查。如果 cookies 有效，可以将 <code>check_log_in</code> 设为 <code>False</code>，跳过登录检查流程，实现完全免人工干预。</p>
+</blockquote>
+<div class="language-python codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-python codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><div class="token-line" style="color:#393A34"><span class="token comment" style="color:#999988;font-style:italic"># cookies 有效时，跳过登录检查，实现完全无人值守</span><span class="token plain"></span><br></div><div class="token-line" style="color:#393A34"><span class="token plain">db </span><span class="token operator" style="color:#393A34">=</span><span class="token plain"> DouBaoCaptcha</span><span class="token punctuation" style="color:#393A34">(</span><span class="token plain">set_cookies</span><span class="token operator" style="color:#393A34">=</span><span class="token plain">cookie_str</span><span class="token punctuation" style="color:#393A34">,</span><span class="token plain"> check_log_in</span><span class="token operator" style="color:#393A34">=</span><span class="token boolean" style="color:#36acaa">False</span><span class="token punctuation" style="color:#393A34">)</span><br></div></code></pre></div></div>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="两种方案对比">两种方案对比<a href="https://wxhzhwxhzh.github.io/dp-helper-docs/blog/doubao-captcha-login#%E4%B8%A4%E7%A7%8D%E6%96%B9%E6%A1%88%E5%AF%B9%E6%AF%94" class="hash-link" aria-label="两种方案对比的直接链接" title="两种方案对比的直接链接" translate="no">​</a></h2>
+<table><thead><tr><th>方案</th><th>是否需要人工</th><th>适用场景</th></tr></thead><tbody><tr><td>扫码临时登录</td><td>首次需要扫码，之后自动复用 cookie</td><td>本地开发、临时调试</td></tr><tr><td>Cookie 持久化</td><td>完全无需人工（cookie 有效期内）</td><td>服务器部署、长期自动化任务</td></tr></tbody></table>]]></content:encoded>
+            <category>Captcha</category>
+        </item>
         <item>
             <title><![CDATA[Docusaurus 日志更新指南]]></title>
             <link>https://wxhzhwxhzh.github.io/dp-helper-docs/blog/docusaurus-blog-guide</link>
