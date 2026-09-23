@@ -109,6 +109,15 @@ const config = {
           },
           {
             type: 'dropdown',
+            label: 'RuyiPage',
+            position: 'right',
+            items: [
+              {label: 'RuyiPage文档官网', href: 'https://0xshoulderlab.site/automation'},
+              {label: 'RuyiPage GitHub', href: 'https://github.com/LoseNine/ruyipage'},
+            ],
+          },
+          {
+            type: 'dropdown',
             label: 'DrissionPage',
             position: 'right',
             items: [
