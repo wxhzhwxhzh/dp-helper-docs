@@ -1,0 +1,8 @@
+{
+  "label": "RuyiPage",
+  "position": 16,
+  "link": {
+    "type": "generated-index",
+    "description": "ruyipage 是一个基于 Firefox 的 Python 浏览器自动化库，底层走 WebDriver BiDi（双向协议），封装了大量友好、易用的高层 API。从打开网页、点按钮、填表单到网络拦截、环境模拟、拟人化操作、JS 断点调试一应俱全。"
+  }
+}
