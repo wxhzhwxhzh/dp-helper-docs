@@ -50,6 +50,8 @@ const config = {
         },
         blog: {
           showReadingTime: true,
+          // 显示所有博客文章
+          blogSidebarCount: 'ALL',
           feedOptions: {
             type: ['rss', 'atom'],
             xslt: true,

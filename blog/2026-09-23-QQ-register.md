@@ -7,7 +7,7 @@ description: 用ruyipage实现QQ注册
 ---
 
 ## 脚本实现
-{/* truncate */}
+
 ```python
 from ruyipage import launch
 
