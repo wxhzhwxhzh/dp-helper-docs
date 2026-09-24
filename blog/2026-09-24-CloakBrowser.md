@@ -40,6 +40,8 @@ page.frames
 
 所以如果你已经会 Playwright，那么上手 CloakBrowser 会非常快。
 
+{/* truncate */}
+
 ---
 
 # 2. 安装

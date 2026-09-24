@@ -6,6 +6,10 @@ tags: [captcha]
 description: 用ruyipage实现QQ注册
 ---
 
+用 ruyipage 自动化脚本实现 QQ 网页注册，以下为完整示例代码。
+
+{/* truncate */}
+
 ## 脚本实现
 
 ```python

@@ -37,3 +37,13 @@ captcha:
   label: Captcha
   permalink: /captcha
   description: 验证码 / 登录校验相关
+
+ai:
+  label: AI
+  permalink: /ai
+  description: AI 相关
+
+"生图提示词":
+  label: 生图提示词
+  permalink: /image-prompts
+  description: AI 生图提示词 / Prompt 相关
