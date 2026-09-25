@@ -7,7 +7,7 @@ slug: /
 
 **骚神库 DrissionPage 浏览器助手**：面向 DrissionPage 浏览器自动化开发的 Chrome 插件，帮你省去手写定位语法的麻烦。
 
-![](img/Pasted%20image%2020260917213828.png)
+![](img/main.webp)
 
 
 ## 核心功能
