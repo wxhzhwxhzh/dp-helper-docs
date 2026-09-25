@@ -14,7 +14,33 @@
   --ifm-color-primary-lighter: #359962;
   --ifm-color-primary-lightest: #3cad6e;
   --ifm-code-font-size: 95%;
+  --ifm-font-family-base: 'Noto Sans SC', system-ui, 'Segoe UI', sans-serif;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* 切换到思源宋体（Noto Serif SC）：全站正文字体随之切换，标题自动跟随 */
+[data-font='serif'] {
+  --ifm-font-family-base: 'Noto Serif SC', 'Noto Sans SC', system-ui, serif;
+}
+
+/* 导航栏字体切换按钮 */
+.navbar__font-toggle {
+  cursor: pointer;
+  background: none;
+  border: none;
+  font: inherit;
+  color: var(--ifm-font-color-base);
+  padding: var(--ifm-navbar-item-padding-vertical)
+    var(--ifm-navbar-item-padding-horizontal);
+  white-space: nowrap;
+}
+
+[data-theme='light'] .navbar__font-toggle:hover {
+  color: var(--ifm-color-primary);
+}
+
+[data-theme='dark'] .navbar__font-toggle:hover {
+  color: var(--ifm-color-primary-lighter);
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */

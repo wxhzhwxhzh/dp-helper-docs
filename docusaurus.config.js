@@ -10,6 +10,22 @@ const config = {
   title: 'dp_helper',
   tagline: 'Dinosaurs are cool',
   favicon: 'img/saologo.png',
+  // 全站字体：通过 CDN 加载思源黑体/思源宋体（Noto Sans/Serif SC）
+  stylesheets: [
+    'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5.3.0/400.css',
+    'https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5.3.0/700.css',
+    'https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.3.0/400.css',
+    'https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.3.0/700.css',
+  ],
+  // 渲染前恢复用户字体偏好，避免闪烁（与主题检测脚本同理）
+  headTags: [
+    {
+      tagName: 'script',
+      attributes: {},
+      innerHTML:
+        "(function(){try{var f=localStorage.getItem('dp-font');if(f==='serif'){document.documentElement.dataset.font='serif';}}catch(e){}})();",
+    },
+  ],
   // 未来功能开关，参见 https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
     v4: true, // 提升与即将到来的 Docusaurus v4 的兼容性
