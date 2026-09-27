@@ -1,0 +1,8 @@
+{
+  "label": "Tampermonkey",
+  "position": 17,
+  "link": {
+    "type": "generated-index",
+    "description": "油猴（Tampermonkey / 暴力猴）用户脚本入门：从安装、元数据块、Greasemonkey API 到跨域请求、SPA 注入、页面钩子与脚本发布。"
+  }
+}

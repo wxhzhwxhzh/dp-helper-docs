@@ -47,3 +47,8 @@ ai:
   label: 生图提示词
   permalink: /image-prompts
   description: AI 生图提示词 / Prompt 相关
+
+xpath:
+  label: XPath
+  permalink: /xpath
+  description: 元素定位、XPath / CSS 选择器与辅助脚本
