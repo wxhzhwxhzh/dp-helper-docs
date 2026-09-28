@@ -1,0 +1,8 @@
+{
+  "label": "WinGet",
+  "position": 18,
+  "link": {
+    "type": "generated-index",
+    "description": "WinGet 是微软官方的 Windows 包管理器。用一行命令装软件、升版本、卸干净，支持版本锁定、批量导出导入、私有源，甚至可以自己写 manifest 提交到社区仓库。"
+  }
+}
