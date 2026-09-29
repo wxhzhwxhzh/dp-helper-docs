@@ -1,0 +1,214 @@
+---
+slug: code-font-departure-mono
+title: 给代码块换上 Departure Mono，一个 CSS 变量搞定
+authors: [saoshen]
+tags: [docusaurus, font]
+description: 把全站代码的英文部分换成像素风格等宽字体 Departure Mono。过程里没有用到一行 JS，倒是翻源码确认了三件原本拿不准的事。
+---
+
+给文档站所有代码块换上了 Departure Mono（像素风格等宽字体）。最初以为要写 JS 注入，实际上一行不用——但为了确认「一个变量到底管不管全部」「内联样式会不会压不掉」，翻了会儿源码，这里一并记下。
+
+{/* truncate */}
+
+## 需求
+
+把文档里所有代码（行内代码 + 代码块）的英文部分换成 Departure Mono，中文注释保持原样。纯静态修改，不要切换按钮。
+
+## 结论先行：不用 JS
+
+Docusaurus 里改代码字体是**纯 CSS** 的事。这点值得说清楚，因为上一篇文章（[给文档站引入思源黑体/宋体](/blog/site-fonts)）确实写了 JS：
+
+那次的 JS 负责的是**记住用户的选择**——读写 localStorage、给 `<html>` 贴 `data-font` 属性。真正换字体的始终是 CSS：
+
+```css
+[data-font='serif'] {
+  --ifm-font-family-base: 'Noto Serif SC', 'Noto Sans SC', system-ui, serif;
+}
+```
+
+这次没有交互需求，JS 那层整个省掉。
+
+## 一个变量管全部三处
+
+Infima 把行内代码、代码块、`<kbd>` 的字体都指向同一个变量（`node_modules/infima/dist/css/default/default.css`）：
+
+| 行 | 选择器 | 用法 |
+| --- | --- | --- |
+| 943 | `code` | `font-family: var(--ifm-font-family-monospace)` |
+| 958 | `pre` | `font:` 简写，同一变量 |
+| 978 | `kbd` | `font:` 简写，同一变量 |
+
+所以改 `--ifm-font-family-monospace` 一个值，三处全中。
+
+## 翻源码确认的三件事
+
+### ① `pre code` 的重置不含 `font-family`
+
+这是我最没把握的一点。`pre code` 会重置一批属性，万一把 `font-family` 也重置了，变量就传不下去（`default.css:964-969`）：
+
+```css
+pre code {
+    background-color: transparent;
+    border: none;
+    font-size: 100%;
+    line-height: inherit;
+    padding: 0;
+  }
+```
+
+`font-size`、`line-height`、`padding`、`background`、`border` 都在，**唯独没有 `font-family`**。继承链是通的。
+
+### ② Prism 不写内联 `font-family`
+
+语法高亮是内联样式注入的，很容易担心它把字体锁死。翻产物 `build/python/basic.html`，注释 token 实际长这样：
+
+```html
+<span class="token comment" style=color:#999988;font-style:italic># 整除 3</span>
+```
+
+只写了 `color` 和 `font-style`，**没有任何内联 `font-family`**。CSS 变量不会被压掉。
+
+### ③ 层叠顺序：我们的覆盖必须排在 Infima 默认值之后
+
+这是最容易静默失败的地方。构建产物里同一个 `:root` 中，两个变量各出现两次：
+
+```text
+     4014  --ifm-font-family-monospace:SFMono-Regular,Menlo,Monaco,Cons...
+     4977  --ifm-code-font-size:90%
+    77376  --ifm-code-font-size:16.5px
+    77474  --ifm-font-family-monospace:"Departure Mono",SFMono-Regular,...
+```
+
+权重完全相同（都是 `:root`），纯靠先后顺序决胜。我们的值在 77376 / 77474，远靠后，覆盖生效。
+
+和上次 `themeConfig.stylesheets` 那个坑一脉相承——**Docusaurus 里「不报错但没生效」是个高频陷阱**。验证时别只看 build 成功，要翻产物确认实际写进去了。
+
+## 像素字体的 11px 网格
+
+Departure Mono 的 README 提了一嘴：
+
+> For pixel-perfect results, set the font size to increments of 11px.
+
+打开字体看了一眼表头：`unitsPerEm = 550`，即每个设计像素 = 50 单位。11px 时正好 1 设计像素 = 1 CSS 像素，笔画落在整数网格上。
+
+而本站原来是 `--ifm-code-font-size: 95%`，配 `--ifm-font-size-base: 100%`（16px），实际 **15.2px = 1.382 倍**——笔画落在小数像素上，发虚。
+
+倍数有三个选项：
+
+| 字号 | 倍数 | 效果 |
+| --- | --- | --- |
+| 11px | 1× | 所有设备完美，但比原来小一圈 |
+| **16.5px** | **1.5×** | **2x 屏上每个设计像素 = 3 设备像素，完全清晰；1x 屏轻微发软** |
+| 22px | 2× | 所有屏幕最锐利，但比原来大很多 |
+
+选了 16.5px，观感最接近现状，2x 屏（现在绝大多数）上完全清晰。
+
+## 中文为什么不动
+
+这字体只有 1,186 个字形，覆盖 Latin / Latin-1 / Latin Extended-A / Cyrillic / Greek / 制表符，**没有任何 CJK 字形**。
+
+现在的等宽栈是：
+
+```text
+SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace
+```
+
+这七个也全都不含中文。所以中文注释一直是掉到栈尾 `monospace` 通用回退、由操作系统决定的——Windows 给新宋体，macOS 给别的，同一份文档跨平台观感本来就不一致。
+
+这次把 Departure Mono 加在栈首，**它同样没有中文，于是中文继续顺延到栈尾，行为完全不变**。等于「中文不管」是零成本的。
+
+> 顺带记一笔：真想给中文代码注释找个正经等宽字体（如更纱黑体 Sarasa Mono、Noto Sans Mono CJK），CJK 等宽字体体积在 10MB+，jsDelivr 上也没有 fontsource 现成包，跟本站「CDN 引入思源」的轻量思路不兼容，暂不考虑。
+
+## 实施
+
+### 字体放 `src/`，不放 `static/`
+
+Docusaurus 的 webpack 有专门的字体规则（`node_modules/@docusaurus/utils/lib/webpackUtils.js:76-79`）：
+
+```js
+fonts: () => ({
+    use: [loaders.url({ folder: 'fonts' })],
+    test: /\.(?:woff2?|eot|ttf|otf)$/i,
+}),
+```
+
+匹配后输出到 `assets/fonts/` 并自带内容哈希，css-loader 自动改写 URL，`publicPath` 自动补上 `baseUrl`。所以放 `src/fonts/` 有个额外好处：**产物里只有一份，不会被 `static/` 再复制一遍**。
+
+如果放 `static/` 也能生效——webpack 的 `resolve.roots` 特意包含了 static 目录，源码注释原文写着（`base.js:149-152`）：
+
+```js
+// Allow resolution of url("/fonts/xyz.ttf") by webpack
+```
+
+但那样产物里会有两份 22KB 的字体。
+
+### `@font-face` 里 `local()` 放首位
+
+```css
+@font-face {
+  font-family: 'Departure Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Departure Mono'),
+    url('../fonts/DepartureMono-Regular.woff2') format('woff2');
+}
+```
+
+`local()` 在前：本地已装这款字体的访客直接命中本地副本，22KB 都不用下。`font-display: swap` 保证字体未就绪时先用系统等宽渲染，不阻塞。
+
+只声明 `font-style: normal` 是刻意的——没有 italic 字面，Prism 注入的 `font-style: italic` 会让浏览器**合成倾斜**，这是想要的效果，所以不要加 `font-synthesis: none`（那会把合成倾斜一起关掉）。
+
+### 字号与字体栈
+
+```css
+:root {
+  /* Departure Mono 需字号为 11px 整数倍才能完美对像素，取 11 × 1.5 = 16.5px。
+     2x 屏上每个设计像素正好 3 设备像素，完全清晰。 */
+  --ifm-code-font-size: 16.5px;
+  /* Departure Mono 置于首位，原系统等宽栈原样保留做兜底 */
+  --ifm-font-family-monospace: 'Departure Mono', SFMono-Regular, Menlo, Monaco,
+    Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+```
+
+系统栈原样保留在后面：字体加载失败或还在 `swap` 期间，自动回退，不会出现无字形。
+
+## 许可证：别忘了
+
+Departure Mono 是 **SIL OFL 1.1** 授权。OFL 第 2 条要求：再分发字体时**必须附带版权声明与许可证全文**。
+
+所以字体进仓库，`LICENSE` 也得跟着一份，放到 `static/fonts/LICENSE`，让访客能在 `/dp-helper-docs/fonts/LICENSE` 读到。这条不是可选项。
+
+## 顺带影响到的其他地方
+
+`--ifm-code-font-size` 的作用范围比「代码块」大，它还被这两处引用：
+
+- `code`（行内代码）——从 15.2px 涨到 16.5px
+- `.codeBlockTitle`（代码块顶部的语言标签栏，即 `python`、`powershell` 那行）
+
+语言标签栏会略大一点，接受了。
+
+另外确认过：全站**没有任何加粗行内代码，也没有任何 `<kbd>`**（grep 均为 0），所以只需要 Regular 一个字面，17 个文件里只挑了 `DepartureMono-Regular.woff2`（22KB），OTF 和 WOFF 都没用。
+
+## 验证
+
+```bash
+npm run build
+```
+
+- `build/assets/fonts/DepartureMono-Regular-<hash>.woff2`，SHA256 与源文件一致
+- `build/fonts/LICENSE` 存在
+- `build/assets/css/*.css` 里 `:root` 含新变量，且位置在 Infima 默认值之后
+- `@font-face` 的 URL 自动带上了 `/dp-helper-docs/` 前缀
+
+> ⚠️ 本地验证有个坑：自己机器上装了 Departure Mono，`local()` 会命中，**看到的是本地渲染**。要验访客体验得开无痕窗口。
+
+## 本次踩坑清单
+
+- 「改字体要写 JS」是误解——交互才需要 JS，静态换字体纯 CSS
+- 别假设 `pre code` 的重置不含 `font-family`，去源码确认（它确实不含）
+- 覆盖 Infima 变量要留意层叠顺序，`:root` 权重相同只能靠先后
+- 像素字体字号须按设计网格取整倍数，否则发虚
+- OFL 字体再分发必须附许可证，别只拷字体文件
+- 本机装了字体反而会掩盖 `local()` 的问题，验证要用无痕

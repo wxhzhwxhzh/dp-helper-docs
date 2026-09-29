@@ -4,6 +4,24 @@
  * work well for content-centric websites.
  */
 
+/**
+ * Departure Mono（OFL 1.1，许可证见 /fonts/LICENSE）
+ * 像素风格等宽字体，仅含 Latin/Cyrillic/Greek 字形，无中文；
+ * 中文注释会顺延到 --ifm-font-family-monospace 栈尾的系统回退，观感与引入前一致。
+ *
+ * 字体由 webpack 的 fonts 规则接管，输出到 assets/fonts/ 并自带内容哈希，
+ * publicPath 自动补 baseUrl，故此处用相对路径即可。
+ * local() 置于 src 首位：本地已安装该字体的访客无需下载 woff2。
+ */
+@font-face {
+  font-family: 'Departure Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Departure Mono'),
+    url('../fonts/DepartureMono-Regular.woff2') format('woff2');
+}
+
 /* You can override the default Infima variables here. */
 :root {
   --ifm-color-primary: #2e8555;
@@ -13,8 +31,13 @@
   --ifm-color-primary-light: #33925d;
   --ifm-color-primary-lighter: #359962;
   --ifm-color-primary-lightest: #3cad6e;
-  --ifm-code-font-size: 95%;
+  /* Departure Mono 需字号为 11px 整数倍才能完美对像素，取 11 × 1.5 = 16.5px。
+     2x 屏上每个设计像素正好 3 设备像素，完全清晰。 */
+  --ifm-code-font-size: 16.5px;
   --ifm-font-family-base: 'Noto Sans SC', system-ui, 'Segoe UI', sans-serif;
+  /* Departure Mono 置于首位，原系统等宽栈原样保留做兜底 */
+  --ifm-font-family-monospace: 'Departure Mono', SFMono-Regular, Menlo, Monaco,
+    Consolas, 'Liberation Mono', 'Courier New', monospace;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
 

@@ -52,3 +52,8 @@ xpath:
   label: XPath
   permalink: /xpath
   description: 元素定位、XPath / CSS 选择器与辅助脚本
+
+font:
+  label: 字体
+  permalink: /font
+  description: 字体的引入、切换与代码块样式定制
